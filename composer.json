@@ -1,0 +1,21 @@
+{
+    "name": "Abdulrazak-Alkl/yii-geocode",
+    "description": "Google Geocoding API v3 Extension",
+    "keywords": ["yii geocoding", "geocode", "geocoding", "google geocoding", "location", "geographic coordinates", "address", "google api"],
+    "version": "1.1",
+    "autoload": {
+        "classmap": [
+            "./Geocode.php"
+        ]
+    },
+    "require" : {
+        "php": ">=5.3.0",
+        "hackerone/curl": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Abdulrazak",
+            "email": "abdulrazaqalkl@gmail.com"
+        }
+    ]
+}
