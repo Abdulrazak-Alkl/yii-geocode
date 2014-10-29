@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdulrazakalkl
- * Date: 9/30/14
- * Time: 1:23 PM
- */
 
 /**
  * Geocode class file.
@@ -14,24 +8,43 @@
  * @version 0.1
  */
 
+//'geocode' => array (
+//    'class' => 'application.components.Geocode',
+//    'API_KEY' => '', // get your key from Google Developer Console
+//    'client' => '', 'signature' => '', // must set for Business users instead of a key.
+//    // optional filters
+//    'language' => '',
+//    'region' => '',
+//    'components' => array(
+//        'route' => '',
+//        'locality' => '',
+//        'administrative_area' => '',
+//        'postal_code' => '',
+//        'country' => '',
+//    ),
+//    'bounds' => array(
+//        'northeast' => array(
+//            'lat' => -23.5370283,
+//            'lng' => -46.8357228
+//        ),
+//        'southwest' => array(
+//            'lat' => -23.5373732,
+//            'lng' => -46.8374628
+//        )
+//    )
+//)
+
 class Geocode extends CApplicationComponent{
 
     // Visit the APIs console at https://code.google.com/apis/console and log in with your Google Account.
     public $API_KEY;
 
-    // Google Maps API for Work users must include valid client and signature parameters with their Geocoding requests.
+    // Maps for Business users must include client and signature parameters with their requests instead of a key.
     public $client;
     public $signature;
 
     // The request format: https://maps.googleapis.com/maps/api/geocode/json?parameters
-    public $request = 'https://maps.googleapis.com/maps/api/geocode/json?';
-
-    /**
-     * Required parameters in a geocoding request
-     */
-
-    // The address that you want to geocode
-    public $address;
+    private $request = 'https://maps.googleapis.com/maps/api/geocode/json';
 
     /**
      *  Optional parameters in a geocoding request
@@ -48,7 +61,6 @@ class Geocode extends CApplicationComponent{
             'lat' => 0,
             'lng' => 0,
         ),
-
     );
 
     //language — The language in which to return results.
@@ -67,16 +79,52 @@ class Geocode extends CApplicationComponent{
     );
 
     public function init(){
-
     }
 
+    /**
+     * @param $address string Address that you want to geocode
+     * @return array Coordinates
+     */
     public function lookupByAddress($address){
-
+        $params = $this->getOptions();
+        $params['address'] = $address;
+        return Yii::app()->curl->get($this->request, $params);
     }
 
     public function lookupByCoordinates($Coordinates){
 
     }
 
+    public function getOptions(){
+        $options = array();
+        $options['components'] = '';
+        if (!empty($this->API_KEY))
+           $options['key'] = $this->API_KEY;
+        if (!empty($this->client))
+            $options['client'] = $this->client;
+        if (!empty($this->signature))
+            $options['signature'] = $this->signature;
+        if (!empty($this->language))
+            $options['language'] = $this->language;
+        if (!empty($this->region))
+            $options['region'] = $this->region;
+
+        if (!empty($this->components['route']))
+            $options['components']['route'] = $this->components['route'];
+        if (!empty($this->components['locality']))
+            $options['components']['locality'] = $this->components['locality'];
+        if (!empty($this->components['administrative_area']))
+            $options['components']['administrative_area'] = $this->components['administrative_area'];
+        if (!empty($this->components['postal_code']))
+            $options['components']['postal_code'] = $this->components['postal_code'];
+        if (!empty($this->components['country']))
+            $options['components']['country'] = $this->components['country'];
+
+        if (!empty($this->bounds['northeast']) || !empty($this->bounds['southwest']))
+            $options['bounds'] = $this->bounds['northeast']['lat'].','.$this->bounds['northeast']['lng']
+                .'|'. $this->bounds['southwest']['lat'].','.$this->bounds['southwest']['lng'];
+
+        return $options;
+    }
 
 }
